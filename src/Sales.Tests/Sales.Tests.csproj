@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- ✅ Ensure ONLY Sales.Tests references Sales.API -->
+		<!-- ✅ Ensure Sales.Tests references Sales.API -->
 		<ProjectReference Include="..\Sales.API\Sales.API.csproj" />
 		<ProjectReference Include="..\Sales.Application\Sales.Application.csproj" />
 		<ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />

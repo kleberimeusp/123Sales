@@ -18,17 +18,14 @@ using ISaleRepository = Sales.Infrastructure.Repositories.ISaleRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Make `Program` partial to allow reference in tests
-public partial class Program { }
 
-// ✅ Configuração do Serilog
-// ✅ Configuração do Serilog - Mover para dentro do `builder.Host`
+// ✅ Configure Serilog in the Correct Place
 builder.Host.UseSerilog((ctx, lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
     .WriteTo.Console()
     .WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day));
 
-builder.Host.UseSerilog();
+
 
 // ✅ Configuração do banco de dados (Usando InMemory, mas pode ser SQL Server ou outro)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -157,3 +154,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// ✅ Make `Program` partial to allow reference in tests
+public partial class Program { }
