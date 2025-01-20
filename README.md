@@ -8,38 +8,33 @@ Since we follow Domain-Driven Design (DDD), references to entities from other do
 
 ## Features
 
-The API must provide a complete CRUD implementation for managing sales transactions. It should support:
+- REST API using .NET Core 8 with JWT Authentication
+- Backend for managing sales transactions
+- Integration with external identity providers
 
-- Sale ID
-- Sale date
-- Customer details
-- Total sale amount
-- Salesperson details
-- Products with quantities, unit prices, discounts, and total item prices
-- Canceled/Not Canceled status
+## .Net Core 8 Layer Model (Universal Reference Architecture)
 
-## Additional Requirements (Optional but Recommended)
-
-Implement event publication for actions like:
-
-- SaleCreated
-- SaleUpdated
-- SaleCanceled
-- ItemCanceled
-
-These events can be logged in the application or integrated with a **Message Broker** (e.g., RabbitMQ or Service Bus), if preferred.
-
-## Business Rules
-
-- Sales with more than 4 identical items: **10% discount**
-- Sales with 10 to 20 identical items: **20% discount**
-- Cannot sell more than 20 identical items
-- Sales with fewer than 4 identical items cannot receive a discount
+```plaintext
+.github/                # GitHub Actions configuration or other workflow settings
+.vscode/                # Visual Studio Code-specific configuration
+src/                    # Source code folder
+    Sales.API/          # API Layer (Controllers, Middlewares, Filters)
+    Sales.Application/  # Application Layer (Use Cases, DTOs, Interfaces)
+    Sales.Domain/       # Domain Layer (Entities, Aggregates, Domain Services)
+    Sales.Infrastructure/ # Infrastructure Layer (Repositories, Database Context, External Integrations)
+    Sales.Tests/        # Unit and Integration tests
+docs/                   # Project documentation
+scripts/                # Automation scripts
+.env                    # Environment variables file
+docker-compose.yml      # Docker Compose file for multi-container configuration
+Dockerfile              # Dockerfile for image building
+README.md               # Project description
+```
 
 ## Technologies and Best Practices
 
 - **Logging**: Use Serilog
-- **Layered Architecture**: API, Domain, and Data separation
+- **Layered Architecture**: API, Application, Domain, Infrastructure separation
 - **Git Workflow**: Implement Git Flow
 - **Commit Practices**: Follow Semantic Commit standards
 - **REST API Principles**: Implement RESTful API
@@ -59,35 +54,28 @@ These events can be logged in the application or integrated with a **Message Bro
 ## Installation and Setup
 
 ### Prerequisites
+
 Ensure you have the following installed:
-- .NET SDK 6.0+
-- Visual Studio or VS Code
-- SQL Server or PostgreSQL
-- RabbitMQ (if using event-driven architecture)
 
-### Install Required NuGet Packages
+- .NET SDK 8.0+
+- PostgreSQL 15.3+
+- MongoDB 1.14.1+
+- Docker (for containerized deployment)
+- Visual Studio Code
+
+### Install Dependencies
+
 Run the following commands in the project root:
+
 ```sh
-# Install essential dependencies
-dotnet add package Microsoft.EntityFrameworkCore.SqlServer
-
-# Install logging and testing libraries
-dotnet add package Serilog.AspNetCore
-
-# Install testing frameworks
-dotnet add package xunit
-
-dotnet add package FluentAssertions
-
-dotnet add package Bogus
-
-dotnet add package NSubstitute
-
-dotnet add package TestContainers
+# Restore NuGet packages
+dotnet restore
 ```
 
 ### Database Configuration
+
 Update `appsettings.json` with your database connection:
+
 ```json
 {
   "ConnectionStrings": {
@@ -97,13 +85,72 @@ Update `appsettings.json` with your database connection:
 ```
 
 ### Running the Application
+
 Use the following command to run the API:
+
 ```sh
-dotnet run
+dotnet run --project src/Sales.API
 ```
 
 ### Running Tests
+
 Execute unit and integration tests:
+
 ```sh
 dotnet test
 ```
+
+## Docker Setup
+
+### Build and Run with Docker Compose
+
+Run the following command to start the services:
+
+```sh
+docker-compose up --build
+```
+
+### Docker Compose Configuration
+
+```yaml
+version: '3.9'
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/sales_database
+  db:
+    image: postgres:15.3
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sales_database
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+```
+
+### Swagger API Documentation
+
+Access the API documentation at:
+
+```plaintext
+http://localhost:5000/swagger
+```
+
+## Multi-Cloud, On-Premises, and Data Center Environment List
+
+- Development: `environment-dev`
+- Staging: `environment-hml`
+- QA: `environment-qa`
+- Production: `environment-prod`
