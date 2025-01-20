@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Sales.API.Events;
-using Sales.API.Services;
-using System;
+using Sales.Application.DTOs;
+using Sales.Application.Events;
+using Sales.Domain.Events;
 
 namespace Sales.API.Controllers
 {
@@ -11,21 +10,29 @@ namespace Sales.API.Controllers
     public class EventController : ControllerBase
     {
         private readonly IEventPublisher _eventPublisher;
+        private readonly ILogger<EventController> _logger;
 
-        public EventController(IEventPublisher eventPublisher)
+        public EventController(IEventPublisher eventPublisher, ILogger<EventController> logger)
         {
             _eventPublisher = eventPublisher;
+            _logger = logger;
         }
 
-        [HttpPost("{eventType}")]
-        public IActionResult PublishEvent(string eventType)
+        [HttpPost("publish")]
+        public async Task<IActionResult> PublishEvent([FromBody] EventRequest request)
         {
-            var purchaseId = Guid.NewGuid(); // Simulating a purchase ID
-            var purchaseEvent = new PurchaseEvent(eventType, purchaseId);
+            if (request == null || string.IsNullOrWhiteSpace(request.CustomerName))
+            {
+                return BadRequest(new { Message = "Invalid event data." });
+            }
 
-            _eventPublisher.PublishEvent(purchaseEvent);
+            var purchaseEvent = new PurchaseEvent(Guid.NewGuid(), request.CustomerName, request.TotalAmount);
 
-            return Ok(new { Message = "Event published successfully", purchaseEvent });
+            _logger.LogInformation("Publishing event for customer: {CustomerName}", request.CustomerName);
+
+            await _eventPublisher.PublishAsync(purchaseEvent);
+
+            return Ok(new { Message = "Event published successfully", Event = purchaseEvent });
         }
     }
 }

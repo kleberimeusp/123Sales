@@ -1,16 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Sales.API.Domain.Entities;
+using Sales.Domain.Entities;
 
-namespace Sales.API.Domain.Interfaces
+namespace Sales.Domain.Interfaces
 {
     public interface ISaleRepository
     {
-        Task<Sale> GetById(Guid id);
+        Task<Sale?> GetById(Guid id);
         Task<IEnumerable<Sale>> GetAll();
-        Task Add(Sale sale);
-        Task Update(Sale sale);
-        Task Remove(Guid id);
+        Task<Sale> Add(Sale sale);
+        Task<Sale> Update(Sale sale);
+        Task<bool> Delete(Guid id);
     }
 }

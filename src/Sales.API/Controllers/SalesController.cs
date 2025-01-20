@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Sales.API.Models;
-using Sales.API.Repositories;
-using Sales.API.Services;
+using Sales.Domain.Interfaces;
+using Sales.Application.Services;
+using Sales.Domain.Entities;
 
 namespace Sales.API.Controllers
 {
@@ -13,13 +10,13 @@ namespace Sales.API.Controllers
     public class SalesController : ControllerBase
     {
         private readonly ISaleRepository _saleRepository;
-        private readonly DiscountService _discountService;
-        private readonly LoggingService _loggingService;
+        private readonly IDiscountService _discountService;
+        private readonly ILoggingService _loggingService;
 
         public SalesController(
             ISaleRepository saleRepository,
-            DiscountService discountService,
-            LoggingService loggingService)
+            IDiscountService discountService,
+            ILoggingService loggingService)
         {
             _saleRepository = saleRepository;
             _discountService = discountService;
@@ -28,24 +25,25 @@ namespace Sales.API.Controllers
 
         // ✅ GET ALL SALES
         [HttpGet]
-        public async Task<IEnumerable<Sale>> Get()
+        public async Task<ActionResult<IEnumerable<Sale>>> Get()
         {
-            _loggingService.LogInfo("Fetching all sales records.");
-            return await _saleRepository.GetAll();
+            _loggingService.LogInformation("Fetching all sales records.");
+            var sales = await _saleRepository.GetAll();
+            return Ok(sales);
         }
 
         // ✅ GET SALE BY ID
         [HttpGet("{id}")]
         public async Task<ActionResult<Sale>> Get(Guid id)
         {
-            _loggingService.LogInfo($"Fetching sale with ID: {id}");
+            _loggingService.LogInformation($"Fetching sale with ID: {id}");
             var sale = await _saleRepository.GetById(id);
             if (sale == null)
             {
                 _loggingService.LogWarning($"Sale with ID {id} not found.");
-                return NotFound();
+                return NotFound(new { Message = "Sale not found" });
             }
-            return sale;
+            return Ok(sale);
         }
 
         // ✅ CREATE SALE
@@ -55,13 +53,13 @@ namespace Sales.API.Controllers
             if (sale == null || sale.Items == null || sale.Items.Count == 0)
             {
                 _loggingService.LogWarning("Invalid sale data received.");
-                return BadRequest("Invalid sale data");
+                return BadRequest(new { Error = "Invalid sale data" });
             }
 
             sale.Id = Guid.NewGuid();
             sale.SaleDate = DateTime.UtcNow;
             await _saleRepository.Add(sale);
-            _loggingService.LogInfo($"Sale created successfully. Sale ID: {sale.Id}");
+            _loggingService.LogInformation($"Sale created successfully. Sale ID: {sale.Id}");
 
             return CreatedAtAction(nameof(Get), new { id = sale.Id }, sale);
         }
@@ -70,21 +68,20 @@ namespace Sales.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] Sale sale)
         {
-            _loggingService.LogInfo($"Updating sale with ID: {id}");
+            _loggingService.LogInformation($"Updating sale with ID: {id}");
             var existingSale = await _saleRepository.GetById(id);
             if (existingSale == null)
             {
                 _loggingService.LogWarning($"Sale with ID {id} not found.");
-                return NotFound();
+                return NotFound(new { Message = "Sale not found" });
             }
 
-            existingSale.CustomerId = sale.CustomerId;
             existingSale.Items = sale.Items;
-            existingSale.TotalAmount = sale.TotalAmount;
-            existingSale.Canceled = sale.Canceled;
+            existingSale.TotalSaleValue = sale.TotalSaleValue;
+            existingSale.IsCanceled = sale.IsCanceled;
 
             await _saleRepository.Update(existingSale);
-            _loggingService.LogInfo($"Sale with ID {id} updated successfully.");
+            _loggingService.LogInformation($"Sale with ID {id} updated successfully.");
 
             return NoContent();
         }
@@ -93,39 +90,46 @@ namespace Sales.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            _loggingService.LogInfo($"Attempting to delete sale with ID: {id}");
+            _loggingService.LogInformation($"Attempting to delete sale with ID: {id}");
             var sale = await _saleRepository.GetById(id);
             if (sale == null)
             {
                 _loggingService.LogWarning($"Sale with ID {id} not found.");
-                return NotFound();
+                return NotFound(new { Message = "Sale not found" });
             }
 
-            await _saleRepository.Remove(id);
-            _loggingService.LogInfo($"Sale with ID {id} deleted successfully.");
+            await _saleRepository.Delete(id);
+            _loggingService.LogInformation($"Sale with ID {id} deleted successfully.");
 
             return NoContent();
         }
 
         // ✅ PROCESS SALE (APPLY DISCOUNT)
         [HttpPost("process")]
-        public IActionResult ProcessSale([FromBody] List<SaleItem> items)
+        public IActionResult ProcessSale([FromBody] Sale sale)
         {
-            if (items == null || items.Count == 0)
+            if (sale == null || sale.Items == null || sale.Items.Count == 0)
             {
                 _loggingService.LogWarning("Invalid sale data received.");
-                return BadRequest("Invalid sale data.");
+                return BadRequest(new { Error = "Invalid sale data" });
             }
 
             try
             {
-                _discountService.ApplyDiscount(items);
-                _loggingService.LogInfo("Discount applied successfully to sale.");
-                return Ok(new { Message = "Sale processed successfully", Items = items });
+                decimal discountedTotal = _discountService.ApplyDiscount(sale);
+                _loggingService.LogInformation($"Discount applied successfully to sale ID: {sale.Id}");
+
+                return Ok(new
+                {
+                    Message = "Sale processed successfully",
+                    OriginalTotal = sale.TotalSaleValue,
+                    DiscountedTotal = discountedTotal,
+                    Items = sale.Items
+                });
             }
             catch (InvalidOperationException ex)
             {
-                _loggingService.LogError($"Error processing sale: {ex.Message}");
+                _loggingService.LogError($"Error processing sale ID {sale.Id}: {ex.Message}");
                 return BadRequest(new { Error = ex.Message });
             }
         }

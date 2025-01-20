@@ -1,18 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using Sales.API.Models;
+using Sales.Domain.Entities;
 
-namespace Sales.API.Data
+namespace Sales.Infrastructure.Data
 {
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<Sale> Sales { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Sale>()
-                .OwnsMany(s => s.Items);
-        }
+        public DbSet<SaleItem> SaleItems { get; set; }
     }
 }

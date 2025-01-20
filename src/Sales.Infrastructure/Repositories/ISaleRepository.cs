@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Sales.API.Models;
+using Sales.Domain.Entities;
 
-namespace Sales.API.Repositories
+namespace Sales.Infrastructure.Repositories
 {
     public interface ISaleRepository
     {

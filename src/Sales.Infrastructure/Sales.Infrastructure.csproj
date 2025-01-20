@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+	<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.1" />
+	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1" />
+	<ProjectReference Include="..\Sales.Application\Sales.Application.csproj" />
+	<ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+    <PackageReference Include="Serilog" Version="4.2.0" />
+  </ItemGroup>
+
 </Project>
