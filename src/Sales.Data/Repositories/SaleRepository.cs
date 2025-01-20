@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using SalesAPI.Data;
-using SalesAPI.Models;
+using Sales.API.Data;
+using Sales.API.Models;
 
-namespace SalesAPI.Repositories
+namespace Sales.API.Repositories
 {
     public class SaleRepository : ISaleRepository
     {

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SalesAPI.Models;
+using Sales.API.Models;
 
-namespace SalesAPI.Repositories
+namespace Sales.API.Repositories
 {
     public interface ISaleRepository
     {

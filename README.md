@@ -15,20 +15,20 @@ Since we follow Domain-Driven Design (DDD), references to entities from other do
 ## .Net Core 8 Layer Model (Universal Reference Architecture)
 
 ```plaintext
-.github/                # GitHub Actions configuration or other workflow settings
-.vscode/                # Visual Studio Code-specific configuration
-src/                    # Source code folder
-    Sales.API/          # API Layer (Controllers, Middlewares, Filters)
-    Sales.Application/  # Application Layer (Use Cases, DTOs, Interfaces)
-    Sales.Domain/       # Domain Layer (Entities, Aggregates, Domain Services)
+.github/                  # GitHub Actions configuration or other workflow settings
+.vscode/                  # Visual Studio Code-specific configuration
+src/                      # Source code folder
+    Sales.API/            # API Layer (Controllers, Middlewares, Filters)
+    Sales.Application/    # Application Layer (Use Cases, DTOs, Interfaces)
+    Sales.Domain/         # Domain Layer (Entities, Aggregates, Domain Services)
     Sales.Infrastructure/ # Infrastructure Layer (Repositories, Database Context, External Integrations)
-    Sales.Tests/        # Unit and Integration tests
-docs/                   # Project documentation
-scripts/                # Automation scripts
-.env                    # Environment variables file
-docker-compose.yml      # Docker Compose file for multi-container configuration
-Dockerfile              # Dockerfile for image building
-README.md               # Project description
+    Sales.Tests/          # Unit and Integration tests
+docs/                     # Project documentation
+scripts/                  # Automation scripts
+.env                      # Environment variables file
+docker-compose.yml        # Docker Compose file for multi-container configuration
+Dockerfile                # Dockerfile for image building
+README.md                 # Project description
 ```
 
 ## Technologies and Best Practices

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SalesAPI.Models
+namespace Sales.API.Models
 {
     public class Sale
     {

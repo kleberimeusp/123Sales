@@ -1,6 +1,6 @@
 using System;
 
-namespace SalesAPI.Models
+namespace Sales.API.Models
 {
     public class SaleItem
     {

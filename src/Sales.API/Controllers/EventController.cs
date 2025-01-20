@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SalesAPI.Events;
-using SalesAPI.Services;
+using Sales.API.Events;
+using Sales.API.Services;
 using System;
 
-namespace SalesAPI.Controllers
+namespace Sales.API.Controllers
 {
     [ApiController]
     [Route("api/events")]

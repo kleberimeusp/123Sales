@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SalesData.Data;
-using SalesData.Repositories;
-using SalesDomain.Interfaces;
+using Sales.Data.Data;
+using Sales.Data.Repositories;
+using Sales.Domain.Interfaces;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

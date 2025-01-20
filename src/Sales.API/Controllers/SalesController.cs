@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SalesAPI.Models;
-using SalesAPI.Repositories;
-using SalesAPI.Services;
+using Sales.API.Models;
+using Sales.API.Repositories;
+using Sales.API.Services;
 
-namespace SalesAPI.Controllers
+namespace Sales.API.Controllers
 {
     [ApiController]
     [Route("api/sales")]
