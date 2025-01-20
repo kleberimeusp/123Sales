@@ -31,6 +31,48 @@ Dockerfile                # Dockerfile for image building
 README.md                 # Project description
 ```
 
+## Dockerfile
+
+Create a `Dockerfile` in the project root:
+
+```dockerfile
+# Use official .NET SDK image
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /app
+
+# Copy only project files first (for caching restore step)
+COPY src/Sales.API/*.csproj Sales.API/
+COPY src/Sales.Application/*.csproj Sales.Application/
+COPY src/Sales.Domain/*.csproj Sales.Domain/
+COPY src/Sales.Infrastructure/*.csproj Sales.Infrastructure/
+
+# Restore dependencies
+WORKDIR /app/Sales.API
+RUN dotnet restore Sales.API.csproj
+
+# Copy the rest of the project files
+COPY . .
+
+# Build and publish the application
+RUN dotnet publish Sales.API.csproj -c Release -o out
+
+# Use lightweight runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build-env /app/Sales.API/out .
+
+ENTRYPOINT ["dotnet", "Sales.API.dll"]
+```
+
+## Main Technologies Used - API (Backend Microservices)
+
+![C#](https://img.shields.io/badge/C%23-.NET_Core_8-%237159c1?style=for-the-badge&logo=csharp)
+![Docker](https://img.shields.io/badge/Docker-4.1.8-%237159c1?style=for-the-badge&logo=docker)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15.3-%237159c1?style=for-the-badge&logo=postgresql)
+![MongoDB](https://img.shields.io/badge/MongoDB-1.14.1-%237159c1?style=for-the-badge&logo=mongodb)
+
+---
+
 ## Technologies and Best Practices
 
 - **Logging**: Use Serilog
@@ -40,6 +82,26 @@ README.md                 # Project description
 - **REST API Principles**: Implement RESTful API
 - **Code Quality**: Clean Code, SOLID principles, DRY, YAGNI
 - **Best Practices**: Object Calisthenics
+
+## Install Required NuGet Packages
+
+Run the following commands in the project root:
+
+```sh
+# Install logging framework
+dotnet add package Serilog.AspNetCore
+
+# Install unit testing frameworks
+dotnet add package xunit
+dotnet add package FluentAssertions
+dotnet add package Bogus
+dotnet add package NSubstitute
+
+dotnet add package Microsoft.NET.Test.Sdk
+
+# Install integration testing container
+dotnet add package TestContainers
+```
 
 ## Testing Requirements
 
@@ -63,15 +125,6 @@ Ensure you have the following installed:
 - Docker (for containerized deployment)
 - Visual Studio Code
 
-### Install Dependencies
-
-Run the following commands in the project root:
-
-```sh
-# Restore NuGet packages
-dotnet restore
-```
-
 ### Database Configuration
 
 Update `appsettings.json` with your database connection:
@@ -83,31 +136,46 @@ Update `appsettings.json` with your database connection:
   }
 }
 ```
-
-### Running the Application
-
-Use the following command to run the API:
-
-```sh
-dotnet run --project src/Sales.API
-```
-
-### Running Tests
-
-Execute unit and integration tests:
-
-```sh
-dotnet test
-```
-
 ## Docker Setup
 
-### Build and Run with Docker Compose
+### Install Dependencies
 
-Run the following command to start the services:
-
+Check If dotnet restore Works Locally
+Before running inside Docker, try running it manually:
 ```sh
-docker-compose up --build
+dotnet restore src/Sales.API/Sales.API.csproj
+```
+
+To clear and reattempt, run:
+```sh
+dotnet nuget locals all --clear
+dotnet restore src/Sales.API/Sales.API.csproj
+```
+
+ Verify Docker Build Context:
+```sh
+docker build -t sales-api .
+```
+
+If the error persists, check if the .csproj files are included in the container:
+```sh
+docker run --rm -it sales-api ls -R /app
+```
+
+Rebuild Docker Without Cache:
+```sh
+docker system prune -af
+docker build --no-cache -t sales-api .
+```
+
+Use the following command to run the API:
+```sh
+docker run -d -p 5000:5000 --name sales-container sales-api
+```
+
+Execute unit and integration tests:
+```sh
+dotnet test
 ```
 
 ### Docker Compose Configuration
@@ -140,13 +208,22 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
 ```
 
-### Swagger API Documentation
+## Debug
 
-Access the API documentation at:
+Debugging can be done in Visual Studio 2022:
 
-```plaintext
-http://localhost:5000/swagger
-```
+![img-debug](docs/__img/img-debug.png)
+
+## Access Mode: NoSQL, SQL and REST API
+
+- Localhost: [Swagger local machine](http://localhost:5193/index.html)
+  ![img](docs/__img/img.png)
+
+## Mode: Console CMD
+
+- Command Line: [Console CMD](#)
+  ![img](docs/__img/img-debug-02.png)
+---
 
 ## Multi-Cloud, On-Premises, and Data Center Environment List
 
