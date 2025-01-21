@@ -2,8 +2,8 @@
 {
     public class SaleItem
     {
-        public Guid Id { get; set; }  // Unique Identifier for each item
-        public Guid SaleId { get; set; }  // Foreign Key reference to `Sale`
+        public Guid Id { get; set; }  
+        public Guid SaleId { get; set; }  
         public string Product { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
@@ -12,7 +12,7 @@
 
         public SaleItem()
         {
-            Id = Guid.NewGuid(); // Automatically generates a unique ID when creating an item
+            Id = Guid.NewGuid(); 
         }
     }
 }

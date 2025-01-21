@@ -9,8 +9,7 @@ namespace Sales.Infrastructure.Persistence
         {
             var basePath = Directory.GetCurrentDirectory();
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-
-            // Load configuration from appsettings.json
+     
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)

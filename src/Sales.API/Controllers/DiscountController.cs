@@ -39,7 +39,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpPost("process")]
-        public IActionResult ProcessSale([FromBody] Sale sale)
+        public async Task<IActionResult> ProcessSale([FromBody] Sale sale)
         {
             if (!IsValidSale(sale))
             {

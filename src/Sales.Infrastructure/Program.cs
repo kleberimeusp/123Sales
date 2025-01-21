@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Read connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("SalesDB");

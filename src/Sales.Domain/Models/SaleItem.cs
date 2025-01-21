@@ -3,15 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Sales.Domain.Models
 {
-    [Table("SaleItems")]  // Maps to the database table "SaleItems"
+    [Table("SaleItems")]  
     public class SaleItem
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; } = Guid.NewGuid();  // Changed to Guid
+        public Guid Id { get; set; } = Guid.NewGuid();  
 
         [Required]
-        public Guid SaleId { get; set; }  // Foreign Key to Sale (Now Guid)
+        public Guid SaleId { get; set; }  
 
         [Required]
         [MaxLength(200)]

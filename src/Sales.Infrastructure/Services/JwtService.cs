@@ -31,7 +31,7 @@ namespace Sales.Infrastructure.Services
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Unique token ID
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) 
             };
 
             var token = new JwtSecurityToken(
@@ -64,11 +64,11 @@ namespace Sales.Infrastructure.Services
             try
             {
                 tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
-                return true; // Token is valid
+                return true; 
             }
             catch
             {
-                return false; // Invalid or expired token
+                return false; 
             }
         }
 

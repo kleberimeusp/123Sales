@@ -19,7 +19,7 @@ namespace Sales.Infrastructure.Services
                 throw new ArgumentException("Cannot sell more than 20 identical items.");
 
             if (quantity < 4)
-                return totalAmount; // No discount
+                return totalAmount; 
 
             decimal discountPercentage = quantity >= 10 ? 0.20m : 0.10m;
             return totalAmount - (totalAmount * discountPercentage);

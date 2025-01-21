@@ -12,6 +12,7 @@ namespace Sales.Tests.UnitTests
     public class SalesControllerTests
     {
         private readonly SalesController _controller;
+        private readonly DiscountController _discountController;
         private readonly Mock<ISaleRepository> _mockSaleRepo;
         private readonly Mock<IDiscountService> _mockDiscountService;
         private readonly Mock<ILoggingService> _mockLoggingService;
@@ -56,7 +57,7 @@ namespace Sales.Tests.UnitTests
         public async Task ProcessSale_AppliesDiscountSuccessfully()
         {
             var sale = CreateTestSale();
-            var result = await _controller.ProcessSale(sale);
+            var result = await _discountController.ProcessSale(sale);
             var actionResult = Assert.IsType<OkObjectResult>(result);
             Assert.Contains("processed successfully", actionResult.Value.ToString());
         }

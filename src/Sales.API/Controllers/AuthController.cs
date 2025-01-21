@@ -66,7 +66,6 @@ namespace Sales.API.Controllers
 
         private bool AuthenticateUser(LoginRequest request)
         {
-            // Simulação de autenticação
             return request.Username == "admin" && request.Password == "123456";
         }
 

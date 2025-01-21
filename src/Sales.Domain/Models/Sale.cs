@@ -3,15 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Sales.Domain.Models
 {
-    [Table("Sales")]  // Maps to the database table "Sales"
+    [Table("Sales")]  
     public class Sale
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }  // Unique Identifier
+        public Guid Id { get; set; }  
 
         [Required]
-        public int SaleNumber { get; set; }  // Sale number (for display)
+        public int SaleNumber { get; set; }  
 
         [Required]
         public DateTime SaleDate { get; set; }

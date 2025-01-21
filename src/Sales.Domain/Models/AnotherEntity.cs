@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Sales.Domain.Models
 {
-    [Table("AnotherEntity")]  // Maps to the database table "AnotherEntity"
+    [Table("AnotherEntity")]  
     public class AnotherEntity
     {
         [Key]

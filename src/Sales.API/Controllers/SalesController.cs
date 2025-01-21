@@ -11,11 +11,13 @@ namespace Sales.API.Controllers
     public class SalesController : ControllerBase
     {
         private readonly ISaleRepository _saleRepository;
+        private readonly IDiscountService _discountService;
         private readonly ILoggingService _loggingService;
 
-        public SalesController(ISaleRepository saleRepository, ILoggingService loggingService)
+        public SalesController(ISaleRepository saleRepository, IDiscountService discountService, ILoggingService loggingService)
         {
             _saleRepository = saleRepository;
+            _discountService = discountService;
             _loggingService = loggingService;
         }
 
@@ -139,7 +141,7 @@ namespace Sales.API.Controllers
                     ProductName = item.ProductName,
                     Quantity = item.Quantity,
                     UnitPrice = item.UnitPrice,
-                    Discount = 0 // Set discount logic here if needed
+                    Discount = 0 
                 }).ToList()
             };
         }
