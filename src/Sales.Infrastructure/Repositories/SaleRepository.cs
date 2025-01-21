@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Sales.Domain.Models;
 using Sales.Domain.Interfaces;
+using Sales.Domain.Models;
 using Sales.Infrastructure.Data;
 
 namespace Sales.Infrastructure.Repositories

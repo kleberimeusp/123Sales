@@ -1,5 +1,3 @@
-using System.Security.Claims;
-
 namespace Sales.Domain.Interfaces
 {
     public interface IJwtService

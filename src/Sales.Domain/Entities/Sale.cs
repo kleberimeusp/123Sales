@@ -2,7 +2,7 @@
 {
     public class Sale
     {
-        public Guid Id { get;  set; }  // Unique Identifier
+        public Guid Id { get; set; }  // Unique Identifier
         public int SaleNumber { get; set; }  // Sale number (for display)
         public DateTime SaleDate { get; set; }
         public string Customer { get; set; }

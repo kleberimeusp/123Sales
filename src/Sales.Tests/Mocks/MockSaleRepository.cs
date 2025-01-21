@@ -1,10 +1,6 @@
 ﻿using Moq;
-using Sales.Domain.Models;
 using Sales.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Sales.Domain.Models;
 
 namespace Sales.Tests.Mocks
 {

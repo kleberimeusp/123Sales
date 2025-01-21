@@ -1,10 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Sales.Application.DTOs;
-using Sales.Application.Services;
 using Sales.Domain.Interfaces;
 
 namespace Sales.API.Controllers

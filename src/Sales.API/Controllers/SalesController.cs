@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Sales.Domain.Interfaces;
 using Sales.Application.DTOs;
-using Sales.Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Sales.Application.Services;
-using Microsoft.EntityFrameworkCore;
+using Sales.Domain.Interfaces;
+using Sales.Domain.Models;
 
 namespace Sales.API.Controllers
 {

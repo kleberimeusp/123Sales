@@ -1,12 +1,8 @@
 ﻿using System.Text;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
-using Sales.Domain.Entities;
+using Sales.Domain.Models;
 using Xunit;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace Sales.Tests.IntegrationTests
 {
@@ -14,14 +10,9 @@ namespace Sales.Tests.IntegrationTests
     {
         private readonly HttpClient _client;
 
-        public SalesApiTests(WebApplicationFactory<Program> factory) // ✅ Use only Program (No Sales.API)
+        public SalesApiTests(WebApplicationFactory<Program> factory)
         {
-            if (factory is null)
-            {
-                throw new ArgumentNullException(nameof(factory));
-            }
-
-            _client = factory.CreateClient();
+            _client = factory?.CreateClient() ?? throw new ArgumentNullException(nameof(factory));
         }
 
         [Fact]
@@ -34,20 +25,24 @@ namespace Sales.Tests.IntegrationTests
         [Fact]
         public async Task Post_CreatesSaleSuccessfully()
         {
-            var sale = new Sale
+            var sale = CreateTestSale();
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(sale), Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("/api/sales", jsonContent);
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        private Sale CreateTestSale()
+        {
+            return new Sale
             {
                 SaleNumber = 4004,
                 SaleDate = DateTime.UtcNow,
                 Customer = "Bob",
                 TotalSaleValue = 1200,
                 Branch = "Chicago",
-                Items = new List<SaleItem> { new SaleItem { Product = "Tablet", Quantity = 1, UnitPrice = 1200 } }
+                Items = new List<SaleItem> { new SaleItem { ProductName = "Tablet", Quantity = 1, UnitPrice = 1200 } }
             };
-
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(sale), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync("/api/sales", jsonContent);
-
-            response.EnsureSuccessStatusCode();
         }
     }
 }
