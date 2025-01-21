@@ -195,3 +195,6 @@ dotnet test
 ### **Swagger**
 Acesse a documentação Swagger da API em:
 [Swagger Local](http://localhost:5000/index.html)
+
+- Localhost: [Swagger local machine](http://localhost:8080/swagger-ui/index.html)
+  ![img](docs/__img/img.png)
