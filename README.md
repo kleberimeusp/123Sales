@@ -1,184 +1,152 @@
-# Sales API - Backend Implementation
+# 📌 Sales API - Backend Implementation
 
-## Overview
+## 🏆 Overview
 
-The 123Vendas system is divided into multiple domains, including Inventory, CRM (Customer), and Sales. As a Sales team developer, you are required to implement a prototype API for managing sales.
+O **123Vendas** é um sistema composto por diversos domínios, incluindo **Inventário, CRM (Cliente) e Vendas**. Como desenvolvedor da equipe de Vendas, você precisa implementar um **protótipo de API** para gerenciamento de vendas.
 
-Since we follow Domain-Driven Design (DDD), references to entities from other domains should use the **External Identities** pattern, with data denormalization for descriptive attributes.
-
-## Features
-
-- REST API using .NET Core 8 with JWT Authentication
-- Backend for managing sales transactions
-- Integration with external identity providers
-
-## .Net Core 8 Layer Model (Universal Reference Architecture)
-
-```plaintext
-.github/                  # GitHub Actions configuration or other workflow settings
-.vscode/                  # Visual Studio Code-specific configuration
-src/                      # Source code folder
-    Sales.API/            # API Layer (Controllers, Middlewares, Filters)
-    Sales.Application/    # Application Layer (Use Cases, DTOs, Interfaces)
-    Sales.Domain/         # Domain Layer (Entities, Aggregates, Domain Services)
-    Sales.Infrastructure/ # Infrastructure Layer (Repositories, Database Context, External Integrations)
-    Sales.Tests/          # Unit and Integration tests
-docs/                     # Project documentation
-scripts/                  # Automation scripts
-.env                      # Environment variables file
-docker-compose.yml        # Docker Compose file for multi-container configuration
-Dockerfile                # Dockerfile for image building
-README.md                 # Project description
-```
-
-## Dockerfile
-
-Create a `Dockerfile` in the project root:
-
-```dockerfile
-# Use official .NET SDK image
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
-WORKDIR /app
-
-# Copy only project files first (for caching restore step)
-COPY src/Sales.API/*.csproj Sales.API/
-COPY src/Sales.Application/*.csproj Sales.Application/
-COPY src/Sales.Domain/*.csproj Sales.Domain/
-COPY src/Sales.Infrastructure/*.csproj Sales.Infrastructure/
-
-# Restore dependencies
-WORKDIR /app/Sales.API
-RUN dotnet restore Sales.API.csproj
-
-# Copy the rest of the project files
-COPY . .
-
-# Build and publish the application
-RUN dotnet publish Sales.API.csproj -c Release -o out
-
-# Use lightweight runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build-env /app/Sales.API/out .
-
-ENTRYPOINT ["dotnet", "Sales.API.dll"]
-```
-
-## Main Technologies Used - API (Backend Microservices)
-
-![C#](https://img.shields.io/badge/C%23-.NET_Core_8-%237159c1?style=for-the-badge&logo=csharp)
-![Docker](https://img.shields.io/badge/Docker-4.1.8-%237159c1?style=for-the-badge&logo=docker)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15.3-%237159c1?style=for-the-badge&logo=postgresql)
-![MongoDB](https://img.shields.io/badge/MongoDB-1.14.1-%237159c1?style=for-the-badge&logo=mongodb)
+Seguindo os princípios de **Domain-Driven Design (DDD)**, todas as referências a entidades de outros domínios devem seguir o padrão **Identidades Externas**, com **desnormalização de dados** para atributos descritivos.
 
 ---
 
-## Technologies and Best Practices
+## 🎯 Regras de Negócio
 
-- **Logging**: Use Serilog
-- **Layered Architecture**: API, Application, Domain, Infrastructure separation
-- **Git Workflow**: Implement Git Flow
-- **Commit Practices**: Follow Semantic Commit standards
-- **REST API Principles**: Implement RESTful API
-- **Code Quality**: Clean Code, SOLID principles, DRY, YAGNI
-- **Best Practices**: Object Calisthenics
+- **Desconto progressivo**:
+  - **Compras acima de 4 itens iguais** recebem **10% de desconto**.
+  - **Compras entre 10 e 20 itens iguais** recebem **20% de desconto**.
+  - **Não é possível vender mais de 20 itens iguais**.
+  - **Compras abaixo de 4 itens** não podem ter desconto.
 
-## Install Required NuGet Packages
+---
 
-Run the following commands in the project root:
+## ⚙️ Arquitetura da API (Camadas)
+
+A API segue uma arquitetura **bem definida e modular**, baseada nos princípios **Clean Architecture** e **DDD**:
+
+```plaintext
+.github/                  # Configuração do GitHub Actions e workflows
+.vscode/                  # Configurações específicas do VS Code
+src/                      # Código-fonte principal
+    Sales.API/            # Camada de API (Controllers, Middlewares, Filters)
+    Sales.Application/    # Camada de Aplicação (Use Cases, DTOs, Interfaces)
+    Sales.Domain/         # Camada de Domínio (Entidades, Aggregates, Domain Services)
+    Sales.Infrastructure/ # Camada de Infraestrutura (Repositórios, Banco de Dados, Integrações externas)
+    Sales.Tests/          # Testes unitários e de integração
+docs/                     # Documentação do projeto
+scripts/                  # Scripts de automação
+.env                      # Arquivo de variáveis de ambiente
+docker-compose.yml        # Arquivo Docker Compose para configuração multi-container
+Dockerfile                # Arquivo Dockerfile para build da aplicação
+README.md                 # Descrição do projeto
+```
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+A aplicação utiliza as seguintes tecnologias e melhores práticas:
+
+### 📌 Backend e Infraestrutura:
+- **.NET Core 8** para desenvolvimento da API
+- **PostgreSQL 15.3** como banco de dados relacional
+- **MongoDB 1.14.1** como banco de dados NoSQL
+- **Docker & Docker Compose** para conteinerização e deploy
+
+### 🔍 Segurança e Autenticação:
+- **JWT Authentication** para autenticação segura
+- **Serilog** para logging estruturado
+
+### 📌 Boas práticas de desenvolvimento:
+- **Arquitetura em Camadas**: API, Application, Domain, Infrastructure
+- **Git Flow Workflow** para organização dos branches
+- **Commits Semânticos** para versionamento limpo
+- **Princípios de Código**: REST API, Clean Code, SOLID, DRY, YAGNI, Object Calisthenics
+
+### 🧪 Testes Automatizados:
+- **XUnit** para testes unitários
+- **FluentAssertions** para validação fluida
+- **Bogus** para geração de dados fake
+- **NSubstitute** para mocks
+- **Test Containers** (desejável) para testes de integração com containers
+
+---
+
+## 📦 Instalação e Configuração
+
+### 1️⃣ **Pré-requisitos**
+Antes de iniciar, você precisará ter os seguintes softwares instalados:
+
+- **.NET SDK 8.0+**
+- **PostgreSQL 15.3+**
+- **MongoDB 1.14.1+**
+- **Docker** (para deploy containerizado)
+- **Visual Studio Code ou Rider** (opcional)
+
+### 2️⃣ **Instalação das Dependências**
+Execute os seguintes comandos para instalar pacotes essenciais:
 
 ```sh
-# Install logging framework
+# Instalar logging com Serilog
 dotnet add package Serilog.AspNetCore
 
-# Install unit testing frameworks
+# Instalar frameworks de testes
 dotnet add package xunit
 dotnet add package FluentAssertions
 dotnet add package Bogus
 dotnet add package NSubstitute
-
 dotnet add package Microsoft.NET.Test.Sdk
 
-# Install integration testing container
+# Instalar container de testes
 dotnet add package TestContainers
 ```
 
-## Testing Requirements
-
-- **Unit Testing**
-  - Xunit
-  - FluentAssertions
-  - Bogus
-  - NSubstitute
-- **Integration Testing** (Recommended)
-  - Testing Containers
-
-## Installation and Setup
-
-### Prerequisites
-
-Ensure you have the following installed:
-
-- .NET SDK 8.0+
-- PostgreSQL 15.3+
-- MongoDB 1.14.1+
-- Docker (for containerized deployment)
-- Visual Studio Code
-
-### Database Configuration
-
-Update `appsettings.json` with your database connection:
+### 3️⃣ **Configuração do Banco de Dados**
+Edite o arquivo \`appsettings.json\` com as configurações do PostgreSQL:
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=your_server;Database=SalesDB;User Id=your_user;Password=your_password;"
+    "SalesDB": "Host=localhost;Port=5432;Database=SalesDB;Username=postgres;Password=postgres;"
   }
 }
 ```
-## Docker Setup
 
-### Install Dependencies
+---
 
-Check If dotnet restore Works Locally
-Before running inside Docker, try running it manually:
+## 🐳 Configuração Docker
+
+### **1️⃣ Verificar Dependências**
+Antes de rodar a API no Docker, valide se o restore do .NET funciona:
+
 ```sh
 dotnet restore src/Sales.API/Sales.API.csproj
 ```
 
-To clear and reattempt, run:
+Caso precise limpar o cache e tentar novamente:
+
 ```sh
 dotnet nuget locals all --clear
 dotnet restore src/Sales.API/Sales.API.csproj
 ```
 
- Verify Docker Build Context:
+### **2️⃣ Construir e Rodar a API no Docker**
 ```sh
 docker build -t sales-api .
+docker run -d -p 5000:5000 --name sales-container sales-api
 ```
 
-If the error persists, check if the .csproj files are included in the container:
+Para validar o build:
 ```sh
 docker run --rm -it sales-api ls -R /app
 ```
 
-Rebuild Docker Without Cache:
+Se houver erro, tente reconstruir sem cache:
 ```sh
 docker system prune -af
 docker build --no-cache -t sales-api .
 ```
 
-Use the following command to run the API:
-```sh
-docker run -d -p 5000:5000 --name sales-container sales-api
-```
-
-Execute unit and integration tests:
-```sh
-dotnet test
-```
-
-### Docker Compose Configuration
+### **3️⃣ Configuração com Docker Compose**
+Crie um \`docker-compose.yml\` com a seguinte estrutura:
 
 ```yaml
 version: '3.9'
@@ -187,10 +155,8 @@ services:
     build: .
     ports:
       - "5000:5000"
-    volumes:
-      - .:/app
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/sales_database
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/SalesDB
   db:
     image: postgres:15.3
     ports:
@@ -198,7 +164,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: sales_database
+      POSTGRES_DB: SalesDB
   mongo:
     image: mongo
     ports:
@@ -208,26 +174,24 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
 ```
 
-## Debug
+Para rodar:
+```sh
+docker-compose up -d
+```
 
-Debugging can be done in Visual Studio 2022:
-
-![img-debug](docs/__img/img-debug.png)
-
-## Access Mode: NoSQL, SQL and REST API
-
-- Localhost: [Swagger local machine](http://localhost:5193/index.html)
-  ![img](docs/__img/img.png)
-
-## Mode: Console CMD
-
-- Command Line: [Console CMD](#)
-  ![img](docs/__img/img-debug-02.png)
 ---
 
-## Multi-Cloud, On-Premises, and Data Center Environment List
+## 🛠️ Testes Automatizados
 
-- Development: `environment-dev`
-- Staging: `environment-hml`
-- QA: `environment-qa`
-- Production: `environment-prod`
+Execute os testes unitários e de integração:
+```sh
+dotnet test
+```
+
+---
+
+## 🔗 Acesso à API
+
+### **Swagger**
+Acesse a documentação Swagger da API em:
+[Swagger Local](http://localhost:5000/index.html)

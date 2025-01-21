@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Sales.Infrastructure": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\jaugu\\Documents\\___projects\\____my-git\\123Sales\\src\\Sales.Infrastructure\\Migrations",
+      "nativeDebugging": true
+    }
+  }
+}

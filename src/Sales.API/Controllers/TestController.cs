@@ -17,12 +17,17 @@ namespace Sales.API.Controllers
         [HttpGet("log")]
         public IActionResult LogTest()
         {
+            LogMessages();
+            return Ok(new { Message = "Logging test completed!" });
+        }
+
+        // PRIVATE METHODS
+        private void LogMessages()
+        {
             _loggingService.LogInformation("This is an information log.");
             _loggingService.LogWarning("This is a warning log.");
             _loggingService.LogError("This is an error log.");
             _loggingService.LogDebug("This is a debug log.");
-
-            return Ok(new { Message = "Logging test completed!" });
         }
     }
 }

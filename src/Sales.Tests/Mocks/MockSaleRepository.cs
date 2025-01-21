@@ -1,5 +1,5 @@
 ﻿using Moq;
-using Sales.Domain.Entities;
+using Sales.Domain.Models;
 using Sales.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace Sales.Tests.Mocks
                 Branch = "New York",
                 Items = new List<SaleItem>
                 {
-                    new SaleItem { Id = Guid.NewGuid(), SaleId = Guid.NewGuid(), Product = "Laptop", Quantity = 2, UnitPrice = 250 }
+                    new SaleItem { Id = Guid.NewGuid(), SaleId = Guid.NewGuid(), ProductName = "Laptop", Quantity = 2, UnitPrice = 250 }
                 }
             };
 
@@ -38,9 +38,9 @@ namespace Sales.Tests.Mocks
             mockRepo.Setup(repo => repo.GetById(It.IsAny<Guid>()))
                 .ReturnsAsync((Guid id) => salesList.FirstOrDefault(s => s.Id == id));
 
-            // ✅ Mock Add() - Returns a Task<Sale>
+            // ✅ Mock Add() - Returns a Task
             mockRepo.Setup(repo => repo.Add(It.IsAny<Sale>()))
-                .ReturnsAsync((Sale s) =>
+                .Callback<Sale>(s =>
                 {
                     s.Id = Guid.NewGuid();
                     foreach (var item in s.Items)
@@ -49,12 +49,12 @@ namespace Sales.Tests.Mocks
                         item.SaleId = s.Id;
                     }
                     salesList.Add(s);
-                    return s;
-                });
+                })
+                .Returns(Task.CompletedTask);
 
-            // ✅ Mock Update() - Returns a Task<Sale>
+            // ✅ Mock Update() - Returns a Task
             mockRepo.Setup(repo => repo.Update(It.IsAny<Sale>()))
-                .ReturnsAsync((Sale s) =>
+                .Callback<Sale>(s =>
                 {
                     var existingSale = salesList.FirstOrDefault(x => x.Id == s.Id);
                     if (existingSale != null)
@@ -63,10 +63,9 @@ namespace Sales.Tests.Mocks
                         existingSale.TotalSaleValue = s.TotalSaleValue;
                         existingSale.IsCanceled = s.IsCanceled;
                         existingSale.Items = s.Items;
-                        return existingSale;
                     }
-                    return s; // Returning the new sale if it doesn't exist in the list
-                });
+                })
+                .Returns(Task.CompletedTask);
 
             // ✅ Mock Delete() - Returns a Task<bool>
             mockRepo.Setup(repo => repo.Delete(It.IsAny<Guid>()))
