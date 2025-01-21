@@ -13,32 +13,50 @@ namespace Sales.Tests.Mocks
         public static Mock<ISaleRepository> GetSaleRepository()
         {
             var mockRepo = new Mock<ISaleRepository>();
+            var salesList = GenerateMockSales();
 
-            var sale = new Sale
+            SetupGetAll(mockRepo, salesList);
+            SetupGetById(mockRepo, salesList);
+            SetupAdd(mockRepo, salesList);
+            SetupUpdate(mockRepo, salesList);
+            SetupDelete(mockRepo, salesList);
+
+            return mockRepo;
+        }
+
+        private static List<Sale> GenerateMockSales()
+        {
+            return new List<Sale>
             {
-                Id = Guid.NewGuid(),
-                SaleNumber = 1001,
-                SaleDate = DateTime.UtcNow,
-                Customer = "John Doe",
-                TotalSaleValue = 500,
-                Branch = "New York",
-                Items = new List<SaleItem>
+                new Sale
                 {
-                    new SaleItem { Id = Guid.NewGuid(), SaleId = Guid.NewGuid(), ProductName = "Laptop", Quantity = 2, UnitPrice = 250 }
+                    Id = Guid.NewGuid(),
+                    SaleNumber = 1001,
+                    SaleDate = DateTime.UtcNow,
+                    Customer = "John Doe",
+                    TotalSaleValue = 500,
+                    Branch = "New York",
+                    Items = new List<SaleItem>
+                    {
+                        new SaleItem { Id = Guid.NewGuid(), SaleId = Guid.NewGuid(), ProductName = "Laptop", Quantity = 2, UnitPrice = 250 }
+                    }
                 }
             };
+        }
 
-            var salesList = new List<Sale> { sale };
+        private static void SetupGetAll(Mock<ISaleRepository> mockRepo, List<Sale> salesList)
+        {
+            mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(salesList);
+        }
 
-            // ✅ Mock GetAll() - Returns a Task<List<Sale>>
-            mockRepo.Setup(repo => repo.GetAll())
-                .ReturnsAsync(salesList);
-
-            // ✅ Mock GetById() - Returns a Task<Sale>
+        private static void SetupGetById(Mock<ISaleRepository> mockRepo, List<Sale> salesList)
+        {
             mockRepo.Setup(repo => repo.GetById(It.IsAny<Guid>()))
                 .ReturnsAsync((Guid id) => salesList.FirstOrDefault(s => s.Id == id));
+        }
 
-            // ✅ Mock Add() - Returns a Task
+        private static void SetupAdd(Mock<ISaleRepository> mockRepo, List<Sale> salesList)
+        {
             mockRepo.Setup(repo => repo.Add(It.IsAny<Sale>()))
                 .Callback<Sale>(s =>
                 {
@@ -51,8 +69,10 @@ namespace Sales.Tests.Mocks
                     salesList.Add(s);
                 })
                 .Returns(Task.CompletedTask);
+        }
 
-            // ✅ Mock Update() - Returns a Task
+        private static void SetupUpdate(Mock<ISaleRepository> mockRepo, List<Sale> salesList)
+        {
             mockRepo.Setup(repo => repo.Update(It.IsAny<Sale>()))
                 .Callback<Sale>(s =>
                 {
@@ -66,21 +86,21 @@ namespace Sales.Tests.Mocks
                     }
                 })
                 .Returns(Task.CompletedTask);
+        }
 
-            // ✅ Mock Delete() - Returns a Task<bool>
+        private static void SetupDelete(Mock<ISaleRepository> mockRepo, List<Sale> salesList)
+        {
             mockRepo.Setup(repo => repo.Delete(It.IsAny<Guid>()))
-                .ReturnsAsync((Guid id) =>
+                .Returns<Guid>(id =>
                 {
                     var saleToRemove = salesList.FirstOrDefault(s => s.Id == id);
                     if (saleToRemove != null)
                     {
                         salesList.Remove(saleToRemove);
-                        return true;
+                        return Task.FromResult(true);
                     }
-                    return false;
+                    return Task.FromResult(false);
                 });
-
-            return mockRepo;
         }
     }
 }
