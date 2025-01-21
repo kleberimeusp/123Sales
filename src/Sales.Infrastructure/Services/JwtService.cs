@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Sales.Domain.Interfaces;
+using System.Security.Cryptography;
 
 namespace Sales.Infrastructure.Services
 {
@@ -14,6 +15,9 @@ namespace Sales.Infrastructure.Services
 
         public JwtService(string secretKey, string issuer, string audience)
         {
+            if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
+                throw new ArgumentException("Secret key must be at least 32 characters long.");
+
             _secretKey = secretKey;
             _issuer = issuer;
             _audience = audience;
@@ -21,13 +25,13 @@ namespace Sales.Infrastructure.Services
 
         public string GenerateToken(string username)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            var key = GetSecurityKey();
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // ID único do token
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Unique token ID
             };
 
             var token = new JwtSecurityToken(
@@ -41,9 +45,9 @@ namespace Sales.Infrastructure.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public ClaimsPrincipal ValidateToken(string token)
+        public bool ValidateToken(string token)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            var key = GetSecurityKey();
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -59,14 +63,27 @@ namespace Sales.Infrastructure.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             try
             {
-                SecurityToken validatedToken;
-                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out validatedToken);
-                return principal; // Retorna os claims do usuário
+                tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
+                return true; // Token is valid
             }
             catch
             {
-                return null;
+                return false; // Invalid or expired token
             }
+        }
+
+        public string GenerateSecureKey(int length = 32)
+        {
+            using var rng = RandomNumberGenerator.Create();
+            var keyBytes = new byte[length];
+            rng.GetBytes(keyBytes);
+            return Convert.ToBase64String(keyBytes);
+        }
+
+        // PRIVATE METHODS
+        private SymmetricSecurityKey GetSecurityKey()
+        {
+            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         }
     }
 }

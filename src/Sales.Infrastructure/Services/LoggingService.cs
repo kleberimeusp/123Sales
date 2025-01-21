@@ -5,7 +5,7 @@ namespace Sales.Infrastructure.Services
 {
     public class LoggingService : ILoggingService
     {
-        private readonly ILogger _logger;
+        private readonly Serilog.ILogger _logger;
 
         public LoggingService()
         {

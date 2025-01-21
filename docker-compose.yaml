@@ -7,7 +7,7 @@ services:
     volumes:
       - .:/app
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/sales_database
+      - DATABASE_URL=Host=localhost;Port=5432;Database=SalesDB;Username=postgres;Password=postgres
   db:
     image: postgres:15.3
     ports:
@@ -15,7 +15,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: sales_database
+      POSTGRES_DB: SalesDB
   mongo:
     image: mongo
     ports:

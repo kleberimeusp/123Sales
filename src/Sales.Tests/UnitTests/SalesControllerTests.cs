@@ -2,7 +2,7 @@
 using Moq;
 using Sales.API.Controllers;
 using Sales.Application.Services;
-using Sales.Domain.Entities;
+using Sales.Domain.Models;
 using Sales.Domain.Interfaces;
 using Sales.Tests.Mocks;
 using Xunit;

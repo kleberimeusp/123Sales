@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Sales.Domain.Entities;
+using Sales.Domain.Models;
 
 namespace Sales.Infrastructure.Data
 {
