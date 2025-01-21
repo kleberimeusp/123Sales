@@ -1,4 +1,4 @@
-﻿using Sales.Domain.Entities;
+﻿using Sales.Domain.Models;
 
 namespace Sales.Application.Services
 {

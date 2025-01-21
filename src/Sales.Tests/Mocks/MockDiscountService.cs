@@ -1,6 +1,6 @@
 ﻿using Moq;
 using Sales.Application.Services;
-using Sales.Domain.Entities;
+using Sales.Domain.Models;
 
 namespace Sales.Tests.Mocks
 {
